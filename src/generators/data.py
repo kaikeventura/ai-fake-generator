@@ -5,7 +5,7 @@ import os
 model = os.environ['OPENAI_MODEL']
 
 
-def generate_data(input_request: str, language: internationalization.Language):
+def generate_data(amount: int, category: str, sub_category: str, language: internationalization.Language):
     response = open_ia_client.client.chat.completions.create(
         model=model,
         messages=[
@@ -46,14 +46,15 @@ def generate_data(input_request: str, language: internationalization.Language):
                 "content": "Try generated the quantity requested, if it is not possible, generate what is possible."
             },
             {
+                "role": "system",
+                "content": "Build only sub-category, without examples, for example: if category is first_name, it could be Mike, Ana, Pedro, Michele"
+            },
+            {
                 "role": "user",
-                "content": f"{input_request}"
+                "content": f"{amount} data points for the {sub_category} subcategory of the {category} category"
             }
         ],
         temperature=0,
     )
 
     return response.choices[0].message.content
-
-
-print(generate_data("5 for a animal bird name", internationalization.Language.en_US))

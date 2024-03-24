@@ -4,7 +4,7 @@ import os
 model = os.environ['OPENAI_MODEL']
 
 
-def generate_sub_categories(input_request: str):
+def generate_sub_categories(amount: int, category: str):
     response = open_ia_client.client.chat.completions.create(
         model=model,
         messages=[
@@ -33,14 +33,15 @@ def generate_sub_categories(input_request: str):
                 "content": "Try generated the quantity requested, if it is not possible, generate what is possible."
             },
             {
+                "role": "system",
+                "content": "Build only sub-category, without examples, for example: first_name, last_name, nickname"
+            },
+            {
                 "role": "user",
-                "content": f"{input_request}"
+                "content": f"{amount} different sub categories for {category} for creating fictitious data"
             }
         ],
         temperature=0,
     )
 
     return response.choices[0].message.content
-
-
-print(generate_sub_categories("5 different sub categories for human for creating fictitious data"))
